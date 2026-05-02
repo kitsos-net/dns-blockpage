@@ -288,8 +288,11 @@
           try {
             if (domain.indexOf("://") !== -1) domain = new URL(domain).hostname;
           } catch (e) {}
-          var el = document.getElementById("blocked-domain");
-          if (el) el.textContent = domain;
+          /* Basic sanity check: only display plausible hostnames */
+          if (/^[a-zA-Z0-9]([a-zA-Z0-9\-\.]{0,251}[a-zA-Z0-9])?$/.test(domain)) {
+            var el = document.getElementById("blocked-domain");
+            if (el) el.textContent = domain;
+          }
         }
       } catch (err) { /* URLSearchParams not supported – fall back to dash placeholder */ }
 
