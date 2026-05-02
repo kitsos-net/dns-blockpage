@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kitsos DNS – Domain blockiert</title>
+
+  <!-- Favicons (primary CDN; JS will swap to cdn2 on failure) -->
+  <link rel="icon" type="image/svg+xml"  href="https://cdn.kitsos.net/logos/fav/favicon.svg"      id="fav-svg" />
+  <link rel="icon" type="image/x-icon"   href="https://cdn.kitsos.net/logos/fav/favicon.ico"      id="fav-ico" />
+  <link rel="icon" type="image/png" sizes="96x96"
+                                         href="https://cdn.kitsos.net/logos/fav/favicon-96x96.png" id="fav-png" />
+
+  <style>
+    /* ── Custom font (font-display:swap so page renders immediately) ── */
+    @font-face {
+      font-family: "KitsosDefault";
+      src: url("https://cdn.kitsos.net/fonts/kitsos-default/default_advanced.ttf") format("truetype");
+      font-display: swap;
+    }
+
+    /* ── Design tokens ── */
+    :root {
+      --bg:           #f0f2f5;
+      --card:         #ffffff;
+      --text:         #111827;
+      --muted:        #6b7280;
+      --accent:       #2563eb;
+      --badge-bg:     #fee2e2;
+      --badge-text:   #dc2626;
+      --shadow:       0 4px 40px rgba(0, 0, 0, 0.09);
+      --radius:       18px;
+      --btn-radius:   10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:         #0a0a0a;
+        --card:       #161616;
+        --text:       #f9fafb;
+        --muted:      #9ca3af;
+        --accent:     #60a5fa;
+        --badge-bg:   #3f1515;
+        --badge-text: #fca5a5;
+        --shadow:     0 4px 40px rgba(0, 0, 0, 0.55);
+      }
+    }
+
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "KitsosDefault", -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 20px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 52px 44px 44px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* ── Logo (light / dark swap via CSS) ── */
+    .logo {
+      height: 52px;
+      width: auto;
+      margin-bottom: 20px;
+    }
+
+    /* Show only the matching variant */
+    .logo-dark  { display: none; }
+    .logo-light { display: block; }
+
+    @media (prefers-color-scheme: dark) {
+      .logo-light { display: none; }
+      .logo-dark  { display: block; }
+    }
+
+    /* Centre the logos inside the card */
+    .logo { margin-left: auto; margin-right: auto; }
+
+    /* ── Service label ── */
+    .service-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    /* ── Blocked indicator ── */
+    .blocked-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 5px 14px;
+      margin-bottom: 22px;
+    }
+
+    .blocked-badge svg {
+      flex-shrink: 0;
+    }
+
+    /* ── Heading ── */
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    /* ── Description ── */
+    .description {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 36px;
+    }
+
+    .domain {
+      font-weight: 700;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    /* ── Buttons ── */
+    .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 13px 28px;
+      border-radius: var(--btn-radius);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.15s ease, transform 0.1s ease;
+      border: 2px solid transparent;
+      line-height: 1;
+    }
+
+    .btn:hover  { opacity: 0.82; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .card { padding: 36px 24px 32px; }
+      h1    { font-size: 22px; }
+      .btn  { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="card" role="main">
+
+    <!-- Logo: light variant -->
+    <img
+      class="logo logo-light"
+      id="logo-light"
+      src="https://cdn.kitsos.net/logos/k.png"
+      alt="Kitsos DNS"
+      onerror="this.onerror=null;this.src='https://cdn2.kitsos.net/logos/k.png'"
+    />
+
+    <!-- Logo: dark variant -->
+    <img
+      class="logo logo-dark"
+      id="logo-dark"
+      src="https://cdn.kitsos.net/logos/k-dark.png"
+      alt="Kitsos DNS"
+      onerror="this.onerror=null;this.src='https://cdn2.kitsos.net/logos/k-dark.png'"
+    />
+
+    <span class="service-label">Kitsos DNS</span>
+
+    <div class="blocked-badge" aria-hidden="true">
+      <!-- Shield-X icon -->
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+      </svg>
+      Domain blockiert
+    </div>
+
+    <h1>Diese Domain ist gesperrt</h1>
+
+    <p class="description">
+      Die Domain <span class="domain" id="blocked-domain">–</span> wurde vom
+      <strong>Kitsos&nbsp;DNS</strong>&#8209;Server blockiert. Sie wird als
+      potenziell schädlich oder richtlinienwidrig eingestuft.
+      <br /><br />
+      Falls du der Meinung bist, dass dies ein Fehler ist, kontaktiere uns bitte
+      über den Button unten.
+    </p>
+
+    <nav class="buttons" aria-label="Aktionen">
+      <a
+        class="btn btn-primary"
+        href="https://kitsos.net/contact?source=dns-blockpage"
+      >Kontakt</a>
+
+      <a
+        class="btn btn-secondary"
+        href="https://status.kitsos.net"
+        target="_blank"
+        rel="noopener noreferrer"
+      >Status</a>
+    </nav>
+
+  </main>
+
+  <footer class="footer">
+    &copy; <span id="year"></span> Kitsos DNS &middot; Alle Rechte vorbehalten
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var CDN1 = "cdn.kitsos.net";
+      var CDN2 = "cdn2.kitsos.net";
+
+      /* ── 1. Dynamic year ── */
+      var yearEl = document.getElementById("year");
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      /* ── 2. Blocked domain from query string ── */
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var domain = params.get("domain") || params.get("host") || params.get("blocked");
+        if (domain) {
+          var el = document.getElementById("blocked-domain");
+          if (el) el.textContent = domain;
+        }
+      } catch (err) { /* URLSearchParams not supported – fall back to dash placeholder */ }
+
+      /* ── 3. CDN2 fallback for favicons & font ── */
+      function switchFavicons() {
+        ["fav-svg", "fav-ico", "fav-png"].forEach(function (id) {
+          var link = document.getElementById(id);
+          if (link && link.href.indexOf(CDN1) !== -1) {
+            link.href = link.href.replace(CDN1, CDN2);
+          }
+        });
+      }
+
+      function loadFont(host) {
+        return new Promise(function (resolve, reject) {
+          /* When FontFace API is unavailable the CSS @font-face declaration
+             above acts as the implicit fallback; nothing extra is needed. */
+          if (!window.FontFace) { resolve(); return; }
+          var url = "https://" + host + "/fonts/kitsos-default/default_advanced.ttf";
+          var face = new FontFace("KitsosDefault", "url(" + url + ")");
+          face.load().then(function (loaded) {
+            document.fonts.add(loaded);
+            resolve();
+          }).catch(reject);
+        });
+      }
+
+      /* Probe: tiny request to CDN1; if it fails switch everything to CDN2 */
+      var probe = new Image();
+      probe.onload = function () {
+        /* CDN1 reachable – load font from CDN1 */
+        loadFont(CDN1).catch(function () {
+          loadFont(CDN2);
+        });
+      };
+      probe.onerror = function () {
+        /* CDN1 unreachable – switch favicons & load font from CDN2 */
+        switchFavicons();
+        loadFont(CDN2);
+      };
+      /* Use a timestamp rounded to the nearest hour so intermediate results
+         can be cached, while still detecting CDN outages within ~1 hour. */
+      var hourStamp = Math.floor(Date.now() / 3600000);
+      probe.src = "https://" + CDN1 + "/logos/fav/favicon-96x96.png?_=" + hourStamp;
+    })();
+  </script>
+
+</body>
+</html>
