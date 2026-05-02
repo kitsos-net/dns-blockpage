@@ -275,15 +275,14 @@
       var yearEl = document.getElementById("year");
       if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-      /* ── 2. Blocked domain from query string ── */
-      try {
-        var params = new URLSearchParams(window.location.search);
-        var domain = params.get("domain") || params.get("host") || params.get("blocked");
-        if (domain) {
-          var el = document.getElementById("blocked-domain");
-          if (el) el.textContent = domain;
-        }
-      } catch (err) { /* URLSearchParams not supported – fall back to dash placeholder */ }
+      /* ── 2. Blocked domain from the current URL ──
+            The DNS server returns the block-page IP for blocked domains, so
+            the browser's address bar already contains the blocked hostname.   */
+      var domain = window.location.hostname;
+      if (domain) {
+        var el = document.getElementById("blocked-domain");
+        if (el) el.textContent = domain;
+      }
 
       /* ── 3. CDN2 fallback for favicons & font ── */
       function switchFavicons() {
