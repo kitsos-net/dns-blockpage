@@ -275,26 +275,14 @@
       var yearEl = document.getElementById("year");
       if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-      /* ── 2. Blocked domain from query string or referrer ── */
-      try {
-        var params = new URLSearchParams(window.location.search);
-        var domain = params.get("domain") || params.get("host") || params.get("blocked")
-                  || params.get("url")    || params.get("name")  || params.get("q");
-        if (!domain && document.referrer) {
-          try { domain = new URL(document.referrer).hostname; } catch (e) {}
-        }
-        if (domain) {
-          /* If a full URL was passed, extract just the hostname */
-          try {
-            if (domain.indexOf("://") !== -1) domain = new URL(domain).hostname;
-          } catch (e) {}
-          /* Basic sanity check: only display plausible hostnames */
-          if (/^[a-zA-Z0-9]([a-zA-Z0-9\-\.]{0,251}[a-zA-Z0-9])?$/.test(domain)) {
-            var el = document.getElementById("blocked-domain");
-            if (el) el.textContent = domain;
-          }
-        }
-      } catch (err) { /* URLSearchParams not supported – fall back to dash placeholder */ }
+      /* ── 2. Blocked domain from the current URL ──
+            The DNS server returns the block-page IP for blocked domains, so
+            the browser's address bar already contains the blocked hostname.   */
+      var domain = window.location.hostname;
+      if (domain) {
+        var el = document.getElementById("blocked-domain");
+        if (el) el.textContent = domain;
+      }
 
       /* ── 3. CDN2 fallback for favicons & font ── */
       function switchFavicons() {
